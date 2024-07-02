@@ -19,15 +19,26 @@ public class customUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
-        if (user == null){
-            throw new UsernameNotFoundException("Aucun user n'existe avec ce identifiant: " + username);
-
+        if (user == null) {
+            throw new UsernameNotFoundException("Aucun utilisateur trouvé avec le nom d'utilisateur: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(user.getRole()
-                )));
+
+        // Vérifier le type d'utilisateur et créer un UserDetails approprié
+        switch (user.getRole()) {
+            case "APPRENANT":
+                return new org.springframework.security.core.userdetails.User(
+                        user.getUsername(), user.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_APPRENANT")));
+            case "FORMATEUR":
+                return new org.springframework.security.core.userdetails.User(
+                        user.getUsername(), user.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_FORMATEUR")));
+            case "ADMIN":
+                return new org.springframework.security.core.userdetails.User(
+                        user.getUsername(), user.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+            default:
+                throw new UsernameNotFoundException("Ce Rôle utilisateur n'existe pas : " + username);
+        }
     }
-
-
 }

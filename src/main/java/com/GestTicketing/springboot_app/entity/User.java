@@ -2,11 +2,12 @@ package com.GestTicketing.springboot_app.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name ="users")
-//@Data pour generer les methodes setter and getter
 @Data
+@NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
